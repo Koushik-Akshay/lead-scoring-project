@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Scoring Contact Form</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XH6CY06GD4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XH6CY06GD4'); // Make sure this matches the tracking ID
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Us</h1>
+        <form id="leadForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+            
+            <label for="company">Company:</label>
+            <input type="text" id="company" name="company" required><br>
+            
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required><br>
+            
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" name="gender" required><br>
+            
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" required><br>
+            
+            <input type="hidden" id="client_id" name="client_id">
+            
+            <button type="submit">Submit</button>
+        </form>
+        <div id="submissionMessage" style="display:none; margin-top: 20px; color: green;"></div>
+    </div>
+
+    <script>
+        document.getElementById('leadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Retrieve Google Analytics client ID
+            gtag('get', 'G-XH6CY06GD4', 'client_id', function(client_id) {
+                document.getElementById('client_id').value = client_id;
+
+                // Submit form via AJAX
+                var formData = new FormData(document.getElementById('leadForm'));
+                fetch('/submit_form', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display success message and clear the form fields
+                    document.getElementById('submissionMessage').innerText = "Form submitted successfully!";
+                    document.getElementById('submissionMessage').style.display = 'block';
+                    
+                    // Clear the form fields
+                    document.getElementById('leadForm').reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
